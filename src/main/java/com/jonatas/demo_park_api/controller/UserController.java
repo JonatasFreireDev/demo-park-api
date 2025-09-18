@@ -1,5 +1,7 @@
 package com.jonatas.demo_park_api.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,5 +40,11 @@ public class UserController {
     public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User userToUpdate) {
         User user = userService.changePassword(id, userToUpdate.getPassword());
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<User>> getAll() {
+        List<User> users = userService.findAll();
+        return ResponseEntity.ok(users);
     }
 }
