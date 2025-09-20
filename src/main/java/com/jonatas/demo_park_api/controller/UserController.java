@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jonatas.demo_park_api.dto.CreateUserDto;
+import com.jonatas.demo_park_api.dto.CreateUserResponseDto;
+import com.jonatas.demo_park_api.dto.UserPasswordDto;
+import com.jonatas.demo_park_api.dto.mapper.UserMapper;
 import com.jonatas.demo_park_api.entity.User;
 import com.jonatas.demo_park_api.service.UserService;
 
@@ -25,21 +29,23 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
-        User newUser = userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    public ResponseEntity<CreateUserResponseDto> create(@RequestBody CreateUserDto user) {
+        User newUser = userService.save(UserMapper.toUser(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toUserResponseDto(newUser));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id) {
+    public ResponseEntity<CreateUserResponseDto> getById(@PathVariable Long id) {
         User user = userService.findById(id);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(UserMapper.toUserResponseDto(user));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User userToUpdate) {
-        User user = userService.changePassword(id, userToUpdate.getPassword());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id,
+            @RequestBody UserPasswordDto dto) {
+        userService.changePassword(id, dto.getPassword(), dto.getNewPassword(),
+                dto.getConfirmNewPassword());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping()
