@@ -1,13 +1,13 @@
 package com.jonatas.demo_park_api.dto.mapper;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
 import com.jonatas.demo_park_api.dto.CreateUserDto;
 import com.jonatas.demo_park_api.dto.CreateUserResponseDto;
 import com.jonatas.demo_park_api.entity.User;
-
-import ch.qos.logback.core.model.Model;
 
 public class UserMapper {
 
@@ -27,6 +27,10 @@ public class UserMapper {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.addMappings(prop);
         return modelMapper.map(user, CreateUserResponseDto.class);
+    }
+
+    public static List<CreateUserResponseDto> toListDto(List<User> users) {
+        return users.stream().map(UserMapper::toUserResponseDto).toList();
     }
 
 }
