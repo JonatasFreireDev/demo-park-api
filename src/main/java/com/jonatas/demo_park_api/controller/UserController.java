@@ -19,6 +19,7 @@ import com.jonatas.demo_park_api.dto.mapper.UserMapper;
 import com.jonatas.demo_park_api.entity.User;
 import com.jonatas.demo_park_api.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<CreateUserResponseDto> create(@RequestBody CreateUserDto user) {
+    public ResponseEntity<CreateUserResponseDto> create(@Valid @RequestBody CreateUserDto user) {
         User newUser = userService.save(UserMapper.toUser(user));
         return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toUserResponseDto(newUser));
     }
@@ -42,7 +43,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updatePassword(@PathVariable Long id,
-            @RequestBody UserPasswordDto dto) {
+            @Valid @RequestBody UserPasswordDto dto) {
         userService.changePassword(id, dto.getPassword(), dto.getNewPassword(),
                 dto.getConfirmNewPassword());
         return ResponseEntity.noContent().build();
