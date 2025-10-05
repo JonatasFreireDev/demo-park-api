@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jonatas.demo_park_api.entity.User;
+import com.jonatas.demo_park_api.exception.EntityNotFoundException;
+import com.jonatas.demo_park_api.exception.UsernameUniqueViolationException;
 import com.jonatas.demo_park_api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,12 +20,18 @@ public class UserService {
 
     @Transactional
     public User save(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new UsernameUniqueViolationException(
+                    String.format("Username '%s' is already taken", user.getUsername()));
+        }
     }
 
     @Transactional(readOnly = true)
     public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with ID %d not found", id)));
     }
 
     @Transactional
