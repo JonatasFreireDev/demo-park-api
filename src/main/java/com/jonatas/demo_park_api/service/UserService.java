@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jonatas.demo_park_api.entity.User;
 import com.jonatas.demo_park_api.exception.EntityNotFoundException;
+import com.jonatas.demo_park_api.exception.PasswordInvalidException;
 import com.jonatas.demo_park_api.exception.UsernameUniqueViolationException;
 import com.jonatas.demo_park_api.repository.UserRepository;
 
@@ -37,12 +38,12 @@ public class UserService {
     @Transactional
     public User changePassword(Long id, String password, String newPassword, String confirmNewPassword) {
         if (!newPassword.equals(confirmNewPassword)) {
-            throw new RuntimeException("The new password and confirmation do not match");
+            throw new PasswordInvalidException("The new password and confirmation do not match");
         }
 
         User user = findById(id);
         if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Current password is incorrect");
+            throw new PasswordInvalidException("Current password is incorrect");
         }
 
         user.setPassword(newPassword);
